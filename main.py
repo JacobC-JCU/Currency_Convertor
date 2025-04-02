@@ -69,30 +69,41 @@ def read_data():
 def calculate_conversion(amount, currency_from, currency_to):
     currency_data = read_data()
 
+    # Inicializace proměnných pro kurzy
+    from_currency_rate = None
+    to_currency_rate = None
+    
     print(currency_from)
     print(currency_to)
 
+    # Procházení dat a hledání příslušných kurzů
     for row in currency_data:
         if row["kód"] == currency_from:
             from_currency_rate = row["kurz"]
         elif row["kód"] == currency_to:
             to_currency_rate = row["kurz"]
-        
 
-    if from_currency_rate != "CZK" and to_currency_rate != "CZK":
+    # Pokud nejsou nalezeny kurzy pro obě měny, vypíšeme chybu
+    if from_currency_rate is None:
+        from_currency_rate = "CZK"
+    if to_currency_rate is None:
+        to_currency_rate = "CZK"
+    # Výpočet konverze
+    if currency_from != "CZK" and currency_to != "CZK":
+        # Pokud ani jedna měna není CZK, použijeme oba kurzy
         converted_amount = amount * from_currency_rate / to_currency_rate
-        converted_amount_label = tk.Label(screen, text=f"{amount} {currency_from} = {converted_amount:.2f} {currency_to}", font=("Arial", 20))
-        converted_amount_label.grid(row=5, column=0, columnspan=2, pady=10)
-    
     else:
-        """
         if currency_from == "CZK":
-            coverter_ammount = amount * "
-        """
-    
+            # Pokud je zdrojová měna CZK
+            converted_amount = amount / to_currency_rate
+        else:
+            # Pokud je cílová měna CZK
+            converted_amount = amount * from_currency_rate
 
-        
-    print(from_currency_rate, to_currency_rate)
+    # Zobrazení výsledku
+    converted_amount_label = tk.Label(screen, text=f"{amount} {currency_from} = {converted_amount:.2f} {currency_to}", font=("Arial", 20))
+    converted_amount_label.grid(row=5, column=0, columnspan=2, pady=10, padx=20)
+
 
 
 # Nadpis
