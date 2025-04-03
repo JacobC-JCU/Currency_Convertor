@@ -14,6 +14,8 @@ screen.resizable(False, False)
 screen.columnconfigure(0, weight=1)
 screen.columnconfigure(1, weight=1)
 
+converted_amount_label = None  
+
 def submit():
     try:
         amount = float(amount_entry.get())  # Získání částky z Entry
@@ -67,7 +69,9 @@ def read_data():
     
 
 def calculate_conversion(amount, currency_from, currency_to):
+    global converted_amount_label
     currency_data = read_data()
+    
 
     # Inicializace proměnných pro kurzy
     from_currency_rate = None
@@ -89,9 +93,13 @@ def calculate_conversion(amount, currency_from, currency_to):
     if to_currency_rate is None:
         to_currency_rate = "CZK"
     # Výpočet konverze
-    if currency_from != "CZK" and currency_to != "CZK":
+    if currency_to == currency_from:
+        converted_amount = amount
+
+    elif currency_from != "CZK" and currency_to != "CZK":
         # Pokud ani jedna měna není CZK, použijeme oba kurzy
         converted_amount = amount * from_currency_rate / to_currency_rate
+
     else:
         if currency_from == "CZK":
             # Pokud je zdrojová měna CZK
@@ -100,6 +108,8 @@ def calculate_conversion(amount, currency_from, currency_to):
             # Pokud je cílová měna CZK
             converted_amount = amount * from_currency_rate
 
+    if converted_amount_label is not None:
+        converted_amount_label.destroy()
     # Zobrazení výsledku
     converted_amount_label = tk.Label(screen, text=f"{amount} {currency_from} = {converted_amount:.2f} {currency_to}", font=("Arial", 20))
     converted_amount_label.grid(row=5, column=0, columnspan=2, pady=10, padx=20)
